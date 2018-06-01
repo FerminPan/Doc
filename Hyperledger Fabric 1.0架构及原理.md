@@ -8,7 +8,7 @@ Hyperledger 项目目前主要包括Fabric,Sawtooth Lake,Iroha,Blockchain-explor
 
 # Fabric 1.0架构简介
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_1.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_1.jpeg)
 
 
 如上图所示，Fabric架构的核心包括三部分：Identity, Ledger及Transactions, Smart Contact.
@@ -26,7 +26,7 @@ Fabric使用建立在HTTP/2上的P2P协议来管理分布式账本。采取可�
 
 # Ledger
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_2.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_2.jpeg)
 
 如上图所示，账本Ledger主要包含两块：blockchain和state。blockchain就是一系列连在一起的block，用来记录历史交易。state对应账本的当前最新状态，它是一个key-value数据库，Fabric默认采用Level DB, 可以替换成其他的Key-value数据库，如Couch DB。举个例子。我们采用区块链实现一个弹珠交易的系统。我们开发了一个Chaincode,每个弹珠有以下几个属性：Name, owner, color, size.  可以定义一个JSON对象，用name做KEY, JSON对象做Value，存储在Level DB或者CouchDB中。
 
@@ -49,14 +49,14 @@ Fabric提供API方便应用开发，对服务端的ChainCode，目前支持用Go
 
  
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_3.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_3.jpeg)
 
  
 
 # Fabric 1.0业务网络
 业务网络，也叫共识网络或区块链网络，由不同的节点构成。节点是区块链的通信实体，节点是一个逻辑概念，不同类型的节点可以运行在同一台物理服务器上。这些节点可能部署在云上面或者本地。可能来自不同的公司或者组织。在区块链网络中有两种类型的节点：Peer节点和Orderer节点，如下图所示。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_4.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_4.jpeg)
 
 Peer节点：chaincode部署在Peer节点上，它对账本进行读写操作。一个Peer节点可以充当多种角色，如背书者endorser,提交者committer。一个区块链网络中会有多个Peer节点。
 
@@ -69,7 +69,7 @@ Orderer节点：对交易进行排序，批量打包，生成区块，发给Peer
 此外，peers的子集将这些私有块提交到不同的账本上，允许它们保护这些私有交易，与其他peers子集的账本隔离开来。应用程序根据业务逻辑决定将交易发送到1个或多个通道。
 
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_5.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_5.jpeg)
  
 
 例如，如上图所示，peer 1,2和N订阅红色通道，并共同维护红色账本; peer 1和N订阅蓝色通道并维护蓝色账本;类似地，peer 2和peer N在黑色通道上并维护黑色账本。
@@ -83,7 +83,7 @@ Orderer节点：对交易进行排序，批量打包，生成区块，发给Peer
 
 Fabric1.0一个典型的交易流程如下图所示：
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_6.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_6.jpeg)
 
 # 1.客户端构造交易提案
 客户端应用程序利用任意SDK（Node.js，java，python）构造交易提案propose。该提案是一个调用智能合约功能函数的请求，用来确认哪些数据可以读取或写入账本。
@@ -91,7 +91,7 @@ Fabric1.0一个典型的交易流程如下图所示：
 
 SDK将交易提案打包为可识别的格式（如gRPC上的protocolbuffer），并使用用户的加密凭证为该交易提案生成唯一的签名。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/doc_7.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/doc_7.jpeg)
 
 # 2.背书节点模拟执行交易
 背书节点endorser收到交易提案后，验证签名并确定提交者是否有权执行操作。背书节点将交易提案的参数作为输入，在当前状态KV数据库上执行交易，生成包含执行返回值、读操作集合和写操作集合的交易结果（此时不会更新账本），这些值的集合、背书节点的签名和背书结果（YES / NO）作为提案的结果返回给客户端SDK，SDK解析这些信息判断是否应用于后续的交易。

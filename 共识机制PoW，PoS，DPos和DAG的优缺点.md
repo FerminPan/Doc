@@ -6,7 +6,7 @@
 
 尽管从功能上看，当前区块链技术仅仅是数据库的一个微小子集，但是其一系列设计机制，与传统数据库的内核理念极为相似。譬如，从其传输和存储的数据结构上来看，区块链的链式结构来源于传统数据库的事务日志。任何数据库的DBA都知道，数据库的事务日志本质上就是不可更改的链式结构，事务中的每一条操作记录都会有一个反向指针指向该事务中的上一条记录。因此，区块链的链式结构本质上脱胎于数据库事务日志，同时增加了区块之间的反向哈希值作为指针，且引入了默克尔树结构进行快速数据校验。因而，我们可以安全地进行认为：区块链的链式结构在存储体系中等价于数据库的事务日志。本质上数据库的任何操作同样是不可篡改的，只不过当前大部分数据库不会对外暴露事务日志的解析工具，仅保存每一条记录的最终状态而已。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_1.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_1.jpeg)
 
 （图1：数据库体系结构，黄色部分代表区块链同样包含的组件）
 
@@ -16,13 +16,13 @@
 
 在分布式数据库中，当前普遍采用PAXOS或RAFT算法进行数据多份冗余的一致性协商。一般来说，在分布式数据库体系中，每个数据分片由至少3个互相冗余备份的节点构成，而在正常运行时的数据库每个分片都会存在一个主节点与两个从节点。其中主节点负责数据的读写操作，从节点进行只读操作。当主节点写入数据时，其事务日志会被实时同步给其他从节点进行回放，以达到主从节点之间数据一致性的目标。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_2.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_2.jpeg)
 
 （图2：数据库主从节点同步）
 
 那么对比区块链的体系，可以认为数据库领域的主节点即日志生成节点，其每次生成事务日志的功能，与区块链中每次出块时矿工的功能完全等价。唯一不同的是，数据库在每次操作时对日志实时广播到从节点中，并且在事务提交时进行一致性判断。而区块链则采用检查点方式，每个节点接收自己的交易请求，并将请求广播到其他节点中，而每一次出块操作即产生一个检查点，该检查点包含的信息即出块节点向区块中写入的所有记录。这些记录被发送到其他节点后，每个节点对数据块中的记录进行验证并永久写入自身的交易日志（即区块文件）。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_3.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_3.jpeg)
 
 （图3：区块链节点互相对等）
 
@@ -35,7 +35,7 @@
 
 因此我们可以安全地认为，从检查点节点选择的领域来看，传统分布式数据库确定主节点生成事务日志的机制，是区块链共识机制的一种简单实现。也就是说，如果区块链共识机制每次都选取同一个节点作为出块节点，其机制基本等价于分布式数据库的主从复制原理（数据库按照事务提交进行一致性验证，区块链不存在事务的概念，因此按照数据块进行一致性验证）。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_4.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_4.jpeg)
 
 （图4：数据库以提交回滚操作作为检查点，区块链以生成区块作为检查点）
 
@@ -63,7 +63,7 @@ PoW是一种极为粗暴原始，但却又及其有效防止恶意攻击的选�
 
 因此，可以看到PoW与PoS最大的区别在于，PoW在算法复杂度足够高的前提下，基本不需要太多的节点间互相通讯和确认，对代码的实现要求极低。而PoS对于多节点间一致性验证、防伪等要求较高，但是很大程度上可以沿用传统一致性选举的思路进行一定程度的优化即可。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_5.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_5.jpeg)
 
 （图5：PoW与PoS流程对比）
 
@@ -77,7 +77,7 @@ DPoS给出一种思路，将成千上万个PoS节点，通过某种机制（例�
 
 这种机制能够大幅度提升选举效率。在几十个最多上百节点之间进行一致性投票一般来说可以在秒级完成并达到共识，因此DPoS机制可以将检查点（事务确认时间）提升到秒级，通过减少投票节点的数量或采用令牌环机制甚至可以降低到毫秒级。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_6.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_6.jpeg)
 
 （图6：PoS对比DPoS）
 
@@ -109,7 +109,7 @@ DAG与链式结构的本质区别在于异步与同步通讯。在前文中已�
 
 在区块链的共识机制中，其本质与分布式数据库的一致性算法存在极多的相似之处。拜占庭问题的引入仅仅从算法和选举节点数量上对网络结构做出一些调整，但是并不从本质上改变分布式系统一致性选举的机制。
 
-![image](https://raw.githubusercontent.com/FerminPan/Static/master/4_11_7.jpeg)
+![image](https://raw.githubusercontent.com/FerminPan/Doc/master/static/4_11_7.jpeg)
 
 （图7：区块链共识机制对比）
 
